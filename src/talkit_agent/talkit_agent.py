@@ -2,11 +2,11 @@ from uuid import UUID, uuid4
 
 from agents import Agent, Runner, trace
 
-from .agents import talkit_agent
+from .ai_agents import talkit_agent
+from .ai_models import ROLE_ASSISTANT, ROLE_USER, AIModelClient
 from .chat import Chat, ChatMessage
 from .context import AgentContext
-from .models import ROLE_ASSISTANT, ROLE_USER, GPTModel
-from .open_api import OpenAPI
+from .open_api import OpenAPIClient
 
 WORKFLOW_NAME = "Conversation"
 
@@ -14,10 +14,10 @@ WORKFLOW_NAME = "Conversation"
 class TalkitAgent:
     def __init__(
         self,
-        ai_model: GPTModel,
-        open_api: OpenAPI,
         base_url: str,
         headers: dict[str, str],
+        open_api_client: OpenAPIClient,
+        ai_model_client: AIModelClient,
     ) -> None:
         """
         Initialize the TalkitAgent with an AI model, OpenAPI specification,
@@ -31,7 +31,9 @@ class TalkitAgent:
         """
         self.chats = {}
         self.starting_agent: Agent = talkit_agent
-        self.agent_context = AgentContext(ai_model, open_api, base_url, headers)
+        self.agent_context = AgentContext(
+            base_url, headers, open_api_client, ai_model_client
+        )
 
     def create_chat(self) -> UUID:
         """Create a new chat and return its ID."""
@@ -55,7 +57,7 @@ class TalkitAgent:
             return True
         return False
 
-    async def send_message(self, prompt: str, chat_id: UUID) -> ChatMessage:
+    async def send_message(self, chat_id: UUID, prompt: str) -> ChatMessage:
         """Send a message to a specific chat. Creates a new chat if chat_id is None."""
         if chat_id not in self.chats:
             raise Exception(f"Chat with ID {chat_id} not found.")

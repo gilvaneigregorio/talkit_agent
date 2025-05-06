@@ -12,7 +12,7 @@ ROLE_ASSISTANT = "assistant"
 DEFALT_MODEL = "gpt-4o-mini"
 
 
-class GPTModel:
+class AIModelClient:
     def __init__(self, api_key: str | None = None, model: str | None = None) -> None:
         """
         Initialize the GPTModel with an API key and model name.

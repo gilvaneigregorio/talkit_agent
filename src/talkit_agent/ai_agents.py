@@ -1,9 +1,7 @@
 from agents import Agent
 
+from .ai_tools import execute_action, get_action, list_actions
 from .context import AgentContext
-from .tools.tool_execute_action import execute_action
-from .tools.tool_get_action import get_action
-from .tools.tool_list_actions import list_actions
 
 talkit_agent = Agent[AgentContext](
     name="Talkit Agent",

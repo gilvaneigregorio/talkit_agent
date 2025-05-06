@@ -1,43 +1,53 @@
 import json
 
 
-class OpenAPI:
+class OpenAPIClient:
     spec: dict
 
-    def load_from_data(self, data: str) -> None:
+    def __init__(self, spec: dict = None) -> None:
         """
-        Load the OpenAPI specification from a JSON string.
+        Initialize the OpenAPI instance.
+        Args:
+            spec (dict, optional): OpenAPI specification. Defaults to None.
+        """
+        self.spec = spec
+        if not self.validate_spec():
+            raise Exception("Provided OpenAPI spec is not valid.")
+
+    @classmethod
+    def from_string(cls, data: str) -> "OpenAPIClient":
+        """
+        Create an OpenAPI instance from a JSON string.
         Args:
             data (str): JSON string containing the OpenAPI specification.
+        Returns:
+            OpenAPI: An instance of the OpenAPI class.
         """
-        self.spec = json.loads(data)
-        self.validate_spec()
+        return cls(json.loads(data))
 
-    def load_from_path(self, path: str) -> None:
+    @classmethod
+    def from_file(cls, path: str) -> "OpenAPIClient":
         """
-        Load the OpenAPI specification from a JSON file.
+        Create an OpenAPI instance from a JSON file.
         Args:
             path (str): Path to the JSON file containing the OpenAPI specification.
+        Returns:
+            OpenAPI: An instance of the OpenAPI class.
         """
-        with open(path, "r") as f:
-            spec_data = json.load(f)
-        self.spec = spec_data
-        self.validate_spec()
+        with open(path, "r") as file:
+            data = json.load(file)
+        return cls(data)
 
     def validate_spec(self) -> bool:
         """
         Validate the OpenAPI specification.
         Returns:
             bool: True if the specification is valid, False otherwise.
-        Raises:
-            Exception: If the OpenAPI specification is not valid.
         """
         required_fields = ["openapi", "info", "paths"]
         for field in required_fields:
             if field not in self.spec:
-                raise Exception(
-                    f"Provided OpenAPI spec is not valid. Missing {field} field."
-                )
+                return False
         return True
 
     def list_operations(self) -> list:
