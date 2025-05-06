@@ -9,3 +9,8 @@ dependencies = [
     "pytest>=8.3.5",
     "ruff>=0.11.8",
 ]
+
+[project.urls]
+"PiPy" = "https://pypi.org/project/talkit-agent/"
+"Repository" = "https://github.com/gilvaneigregorio/talkit_agent/tree/main"
+
